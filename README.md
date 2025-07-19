@@ -62,7 +62,7 @@ Made with 💙 by Indrajeet Pimpalgaonkar
 ![Mentee](static/img/Mentee.png)
 
 ### 📊 Mentor Dashboard
-![Mentor Dashboard](static/img/Mentor%20Dashboard.png)
+![Mentor Dashboard](static/img/Mentor%20dashboard.png)
 
 
 
