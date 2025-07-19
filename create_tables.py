@@ -139,13 +139,7 @@ def create_tables():
     """
     )
 
-    # Ensure the 'created_at' column is added to posts if missing (already handled in app.py, but here for schema completeness)
-    cursor.execute("PRAGMA table_info(posts);")
-    columns = cursor.fetchall()
-    if not any(column[1] == "created_at" for column in columns):
-        cursor.execute(
-            """ALTER TABLE posts ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;"""
-        )
+    # ...existing code...
 
     # Ensure the mentee_profiles table has the mobile_no column
     cursor.execute("PRAGMA table_info(mentee_profiles);")
@@ -168,17 +162,18 @@ conn = sqlite3.connect("mentor_connect.db")
 cursor = conn.cursor()
 # hehe
 from werkzeug.security import generate_password_hash
+
 admin_password = generate_password_hash("admin123")
 cursor.execute(
-            "INSERT INTO users (email, password, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)",
-            (
-                "admin@mentorconnect.com",
-                admin_password,
-                "admin",
-                "System",
-                "Administrator",
-            ),
-        )
+    "INSERT INTO users (email, password, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)",
+    (
+        "admin@mentorconnect.com",
+        admin_password,
+        "admin",
+        "System",
+        "Administrator",
+    ),
+)
 
 cursor.executemany(
     """
