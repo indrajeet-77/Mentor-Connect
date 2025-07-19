@@ -37,6 +37,7 @@ def get_db():
     return conn
 
 def init_db():
+    pass
 
 
 
