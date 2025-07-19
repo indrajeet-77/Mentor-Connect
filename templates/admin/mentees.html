@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Mentees | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="manage-users-page">
+    <div class="page-header">
+        <h1>Mentee Management</h1>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search mentees...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <!-- <a href="#" class="primary-button">
+                <i class="fas fa-plus"></i> Add Mentee
+            </a> -->
+        </div>
+    </div>
+    
+    <div class="users-table-container">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name <i class="fas fa-sort"></i></th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Semester <i class="fas fa-sort"></i></th>
+                    <th>Roll No.</th>
+                    <th>Mobile</th>
+                    <th>Mentors</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mentee in mentees %}
+                <tr>
+                    <td>{{ mentee.id }}</td>
+                    <td class="user-name">
+                        <div class="user-avatar">
+                            {{ mentee.first_name[0] }}{{ mentee.last_name[0] }}
+                        </div>
+                        <span>{{ mentee.first_name }} {{ mentee.last_name }}</span>
+                    </td>
+                    <td>{{ mentee.email }}</td>
+                    <td>{{ mentee.department }}</td>
+                    <td>{{ mentee.semester }}</td>
+                    <td>{{ mentee.roll_no }}</td>
+                    <td>{{ mentee.mobile_no or 'Not provided' }}</td>
+                    <td>{{ mentee.mentor_count }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ url_for('admin_edit_user', user_id=mentee.id) }}" class="edit-btn" title="Edit Mentee">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="delete-btn" title="Delete Mentee" data-user-id="{{ mentee.id }}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this mentee? This action cannot be undone and will remove all associated data.</p>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="secondary-button">Cancel</button>
+                <form id="deleteForm" method="post">
+                    <button type="submit" class="danger-button">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function() {
+        const searchText = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.users-table tbody tr');
+        
+        rows.forEach(row => {
+            const nameCell = row.querySelector('.user-name span').textContent.toLowerCase();
+            const emailCell = row.cells[2].textContent.toLowerCase();
+            const deptCell = row.cells[3].textContent.toLowerCase();
+            const rollNoCell = row.cells[5].textContent.toLowerCase();
+            
+            if (nameCell.includes(searchText) || emailCell.includes(searchText) || 
+                deptCell.includes(searchText) || rollNoCell.includes(searchText)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Delete modal functionality
+    const modal = document.getElementById('deleteModal');
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const closeBtn = document.querySelector('.close');
+    const cancelBtn = document.getElementById('cancelDelete');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            deleteForm.action = `/admin/delete_user/${userId}`;
+            modal.style.display = 'block';
+        });
+    });
+    
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+    
+    cancelBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+    
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

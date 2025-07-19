@@ -1,0 +1,112 @@
+<div class="sidebar">
+    <div class="logo-container">
+        <div class="logo">
+            <i class="fas fa-code"></i>
+            <span>{{ session.role|capitalize }}</span>
+        </div>
+    </div>
+    
+    <nav class="menu">
+        <ul>
+            {% if session.role == 'admin' %}
+                <li class="{{ 'active' if request.path == '/admin/dashboard' else '' }}">
+                    <a href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if request.path == '/admin/mentors' else '' }}">
+                    <a href="{{ url_for('admin_mentors') }}">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Mentors</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if request.path == '/admin/mentees' else '' }}">
+                    <a href="{{ url_for('admin_mentees') }}">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Mentees</span>
+                    </a>
+                </li>
+
+            {% elif session.role == 'mentor' %}
+                <li class="{{ 'active' if request.path == '/mentor/dashboard' else '' }}">
+                    <a href="{{ url_for('mentor_dashboard') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/mentor/posts' in request.path else '' }}">
+                    <a href="{{ url_for('mentor_posts') }}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Posts</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/mentor/meeting' in request.path else '' }}">
+                    <a href="{{ url_for('schedule_meeting', mentee_id=0) }}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Schedule Meeting</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/mentor/mentees' in request.path else '' }}">
+                    <a href="{{ url_for('mentor_mentees') }}">
+                        <i class="fas fa-users"></i>
+                        <span>Mentees</span>
+                    </a>
+                </li>
+                </li>
+                <!-- <li class="{{ 'active' if '/chat' in request.path else '' }}">
+                    <a href="#">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat</span>
+                    </a>
+                </li> -->
+
+            {% elif session.role == 'mentee' %}
+                <li class="{{ 'active' if request.path == '/mentee/dashboard' else '' }}">
+                    <a href="{{ url_for('mentee_dashboard') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/mentee/posts' in request.path else '' }}">
+                    <a href="{{ url_for('mentee_posts') }}">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Posts</span>
+                    </a>
+                </li>
+               <li class="{{ 'active' if '/mentee/meeting' in request.path else '' }}">
+                    <a  href="{{ url_for('mentee_meetings') }}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Meetings</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/mentee/mentors' in request.path else '' }}">
+                    <a href="{{ url_for('mentee_mentors') }}">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Mentors</span>
+                    </a>
+                </li>
+                <!-- <li class="{{ 'active' if '/chat' in request.path else '' }}">
+                    <a href="#">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat</span>
+                    </a>
+                </li> -->
+            {% endif %}
+            
+            <li class="{{ 'active' if '/profile' in request.path else '' }}">
+                <a href="{{ url_for('profile') }}">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+            
+            <li class="logout">
+                <a href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

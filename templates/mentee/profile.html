@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Mentor Profile | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <div class="welcome-header">
+        <h1>Welcome to your profile, {{ session.name }}!</h1>
+    </div>
+    
+    <div class="profile-section">
+        <h2>Personal Information</h2>
+        <div class="profile-details">
+            <p><strong>First Name:</strong> {{ user['first_name'] }}</p>
+            <p><strong>Last Name:</strong> {{ user['last_name'] }}</p>
+            <p><strong>Email:</strong> {{ user['email'] }}</p>
+        </div>
+    </div>
+    
+    <div class="profile-section">
+        <h2>Educational Details</h2>
+        {% if profile %}
+        <div class="profile-details">
+            <p><strong>Department:</strong> {{ profile['department'] }}</p>
+            <!-- <p><strong>Bio:</strong> {{ profile['bio'] }}</p>
+            <p><strong>Expertise:</strong> {{ profile['expertise'] }}</p> -->
+            <p><strong>Mobile Number:</strong> {{ profile['mobile_no'] }}</p>
+        </div>
+        {% else %}
+        <p>No professional details available.</p>
+        {% endif %}
+    </div>
+    
+    <div class="profile-actions">
+        <a href="{{ url_for('edit_profile') }}" class="btn">Edit Profile</a>
+    </div>
+</div>
+{% endblock %}

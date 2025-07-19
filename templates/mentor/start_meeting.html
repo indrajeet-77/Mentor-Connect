@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Start Meeting{% endblock %}
+{% block content %}
+<div class="meeting-room">
+    <h2>Meeting with {{ mentee_name }}</h2>
+    <p><strong>Title:</strong> {{ meeting['title'] }}</p>
+    <p><strong>Time:</strong> {{ meeting['meeting_time'] }}</p>
+    <p><strong>Meeting Link:</strong>
+        {% if meeting['agenda'] and meeting['agenda'].startswith('http') %}
+            <a href="{{ meeting['agenda'] }}" target="_blank">{{ meeting['agenda'] }}</a>
+        {% else %}
+            {{ meeting['agenda'] }}
+        {% endif %}
+    </p>
+    <div>
+        <!-- Replace this with your video meeting integration if needed -->
+        <!-- <p><em>This is a placeholder for your meeting room.</em></p> -->
+    </div>
+</div>
+{% endblock %}

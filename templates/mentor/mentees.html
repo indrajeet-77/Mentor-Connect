@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}My Mentees | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="mentees-page">
+    <div class="page-header">
+        <h1>Mentee Information</h1>
+        <div class="header-actions">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search anything...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <a href="{{ url_for('mentor_pastmentees') }}" class="btn" style="margin-left: 1rem;">View Past Mentees</a>
+        </div>
+    </div>
+
+    <div class="mentees-stats">
+        <p><span class="mentee-count">{{ mentees|length }}</span> mentees found</p>
+    </div>
+
+    <div class="mentees-table-container">
+        <table class="mentees-table">
+            <thead>
+                <tr>
+                    <th>Sl No.</th>
+                    <th>Name <i class="fas fa-sort"></i></th>
+                    <th>Roll No. <i class="fas fa-sort"></i></th>
+                    <!-- <th>Address</th> -->
+                    <th>Department</th>
+                    <th>Semester <i class="fas fa-sort"></i></th>
+                    <th>Mobile No.</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if mentees %}
+                    {% for mentee in mentees %}
+                    <tr class="mentee-row accepted">
+                        <td>{{ loop.index }}</td>
+                        <td class="mentee-name">
+                            <div class="mentee-avatar">
+                                {{ mentee.first_name[0]|upper }}{{ mentee.last_name[0]|upper }}
+                            </div>
+                            <span>{{ mentee.first_name }} {{ mentee.last_name }}</span>
+                        </td>
+                        <td>{{ mentee.roll_no }}</td>
+                        <!-- <td>{{mentee.address}}</td> -->
+                        <td>{{ mentee.department }}</td>
+                        <td>{{ mentee.semester }} semester</td>
+                        <td>{{ mentee.mobile_no or 'N/A' }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('mentor_view_mentee', mentee_id=mentee.id) }}" class="view-btn" title="View Mentee">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="remove-btn" title="Remove Mentee" data-mentee-id="{{ mentee.id }}">
+                                    <i class="fas fa-user-minus"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align: center;">No mentees found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            
+        </table>
+    </div>
+
+    <!-- Modals -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Confirm Action</h2>
+            <p id="modalMessage">Are you sure you want to perform this action?</p>
+            <div class="modal-actions">
+                <button id="cancelAction" class="secondary-button">Cancel</button>
+                <form id="confirmForm" method="post">
+                    <button type="submit" id="confirmAction" class="primary-button">Confirm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Modal functionality
+    const modal = document.getElementById('confirmModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const confirmForm = document.getElementById('confirmForm');
+    const closeBtn = document.querySelector('.close');
+    const cancelBtn = document.getElementById('cancelAction');
+
+    // Close modal when clicking X or Cancel
+    closeBtn.onclick = function () {
+        modal.style.display = 'none';
+    }
+
+    cancelBtn.onclick = function () {
+        modal.style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Accept mentee request
+    document.querySelectorAll('.accept-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const menteeId = this.getAttribute('data-mentee-id');
+            modalTitle.textContent = 'Accept Mentee Request';
+            modalMessage.textContent = 'Are you sure you want to accept this mentee?';
+            confirmForm.action = `/mentor/accept_mentee/${menteeId}`;
+            modal.style.display = 'block';
+        });
+    });
+
+    // Reject mentee request
+    document.querySelectorAll('.reject-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const menteeId = this.getAttribute('data-mentee-id');
+            modalTitle.textContent = 'Reject Mentee Request';
+            modalMessage.textContent = 'Are you sure you want to reject this mentee?';
+            confirmForm.action = `/mentor/reject_mentee/${menteeId}`;
+            modal.style.display = 'block';
+        });
+    });
+
+    // Remove mentee
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const menteeId = this.getAttribute('data-mentee-id');
+            modalTitle.textContent = 'Remove Mentee';
+            modalMessage.textContent = 'Are you sure you want to remove this mentee? This action cannot be undone.';
+            confirmForm.action = `/mentor/remove_mentee/${menteeId}`;
+            modal.style.display = 'block';
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function () {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.mentee-row');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+</script>
+{% endblock %}

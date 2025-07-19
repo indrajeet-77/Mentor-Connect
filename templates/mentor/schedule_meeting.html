@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Schedule Meeting | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="schedule-meeting-page">
+    <div class="page-header">
+        <div class="header-title">
+            <h1>Schedule Meeting</h1>
+            {% if mentee_id %}
+            <a href="{{ url_for('mentor_view_mentee', mentee_id=mentee_id) }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Mentee
+            </a>
+            {% else %}
+            <a href="{{ url_for('mentor_dashboard') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="meeting-form-container">
+        {% if mentee %}
+        <div class="meeting-form-header">
+            <h2>New Meeting with {{ mentee.first_name }} {{ mentee.last_name }}</h2>
+            <p>{{ mentee.department }}, Semester {{ mentee.semester }}</p>
+        </div>
+        {% elif mentees %}
+        <div class="meeting-form-header">
+            <h2>New Meeting</h2>
+            <p>Select a mentee to schedule a meeting with</p>
+        </div>
+        {% endif %}
+
+        <!-- Eye-catching Google Meet button -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+            <a href="https://meet.google.com/landing" target="_blank" class="google-meet-btn">
+                <i class="fas fa-video"></i> Create Meeting
+            </a>
+        </div>
+
+        <form method="post" action="{{ url_for('schedule_meeting') }}" class="meeting-form">
+            {% if mentees and not mentee %}
+            <div class="form-group">
+                <label for="mentee_id">Select Mentee</label>
+                <select id="mentee_id" name="mentee_id" required>
+                    <option value="">-- Select a mentee --</option>
+                    {% for mentee in mentees %}
+                    <option value="{{ mentee.id }}" {% if mentee_id==mentee.id %}selected{% endif %}>
+                        {{ mentee.first_name }} {{ mentee.last_name }} - {{ mentee.department }} (Semester {{
+                        mentee.semester }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% elif mentee_id %}
+            <input type="hidden" name="mentee_id" value="{{ mentee_id }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="title">Meeting Title</label>
+                <input type="text" id="title" name="title" required placeholder="e.g., Academic Progress Review">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="meeting_time">Date & Time</label>
+                    <input type="datetime-local" id="meeting_time" name="meeting_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Duration (minutes)</label>
+                    <select id="duration" name="duration" required>
+                        <option value="15">15 minutes</option>
+                        <option value="30" selected>30 minutes</option>
+                        <option value="45">45 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="90">1.5 hours</option>
+                        <option value="120">2 hours</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="agenda"> Meeting Link</label>
+                <textarea id="agenda" name="agenda" rows="4" placeholder="Add Meeting Link ......"></textarea>
+            </div>
+
+            <div class="form-actions">
+                {% if mentee_id %}
+                <a href="{{ url_for('mentor_view_mentee', mentee_id=mentee_id) }}" class="secondary-button">Cancel</a>
+                {% else %}
+                <a href="{{ url_for('mentor_dashboard') }}" class="secondary-button">Cancel</a>
+                {% endif %}
+                <button type="submit" class="primary-button">Schedule Meeting</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.google-meet-btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #34a853 0%, #4285f4 100%);
+    color: #fff;
+    font-weight: bold;
+    padding: 0.7rem 2rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 16px rgba(66, 133, 244, 0.18), 0 1.5px 6px rgba(52, 168, 83, 0.15);
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+    outline: none;
+    margin-bottom: 0.5rem;
+}
+.google-meet-btn:hover, .google-meet-btn:focus {
+    background: linear-gradient(90deg, #4285f4 0%, #34a853 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(52, 168, 83, 0.22), 0 2px 8px rgba(66, 133, 244, 0.18);
+    color: #fff;
+    text-decoration: none;
+}
+.google-meet-btn i {
+    margin-right: 0.5rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set minimum date to today
+    const meetingTimeInput = document.getElementById('meeting_time');
+    const now = new Date();
+
+    // Format the date for datetime-local input
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    meetingTimeInput.setAttribute('min', minDateTime);
+
+    // Default to tomorrow same time
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tYear = tomorrow.getFullYear();
+    const tMonth = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const tDay = String(tomorrow.getDate()).padStart(2, '0');
+
+    const defaultDateTime = `${tYear}-${tMonth}-${tDay}T10:00`;
+    meetingTimeInput.value = defaultDateTime;
+
+    // If coming from mentee page, preselect the mentee
+    {% if mentee_id and mentees %}
+    document.getElementById('mentee_id').value = "{{ mentee_id }}";
+    {% endif %}
+</script>
+{% endblock %}

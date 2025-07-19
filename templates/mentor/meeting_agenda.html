@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Edit Meeting Agenda{% endblock %}
+{% block content %}
+<div class="agenda-page">
+    <h2>Edit Agenda for Meeting: {{ meeting.title }}</h2>
+    <form method="POST">
+        <label for="agenda">Agenda:</label>
+        <textarea name="agenda" id="agenda" rows="5" required>{{ meeting.agenda or '' }}</textarea>
+        <button type="submit" class="btn">Save Agenda</button>
+    </form>
+</div>
+{% endblock %}

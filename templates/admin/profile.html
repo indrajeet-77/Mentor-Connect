@@ -1,0 +1,15 @@
+<!-- filepath: f:\Mentor-connect Final\Mentor-connect (2)\Mentor-connect\Mentor-connect\project\templates\admin\profile.html -->
+{% extends 'base.html' %}
+
+{% block title %}Admin Profile | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <h1>Admin Profile</h1>
+    <div class="profile-details">
+        <p><strong>First Name:</strong> {{ user.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+</div>
+{% endblock %}

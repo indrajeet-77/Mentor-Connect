@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}My Mentors | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="mentors-page">
+    <div class="page-header">
+        <h1>Mentors</h1>
+    </div>
+    
+    <div class="mentors-container">
+        <!-- Current Mentors Section -->
+        <div class="current-mentors-section">
+            <h2>My Mentors</h2>
+            
+            {% if current_mentors %}
+                <div class="mentors-grid">
+                    {% for mentor in current_mentors %}
+                        <div class="mentor-card {% if mentor.status == 'PENDING' %}pending{% endif %}">
+                            <div class="mentor-avatar large">
+                                {{ mentor.first_name[0] }}{{ mentor.last_name[0] }}
+                            </div>
+                            <div class="mentor-info">
+                                <h3>{{ mentor.first_name }} {{ mentor.last_name }}</h3>
+                                <p class="mentor-dept">{{ mentor.department }}</p>
+                                
+                                {% if mentor.status == 'PENDING' %}
+                                    <div class="mentor-status pending">
+                                        <i class="fas fa-clock"></i> Request Pending
+                                    </div>
+                                {% elif mentor.status == 'ACCEPTED' %}
+                                    <div class="mentor-status accepted">
+                                        <i class="fas fa-check-circle"></i> Connected
+                                    </div>
+                                {% elif mentor.status == 'REJECTED' %}
+                                    <div class="mentor-status rejected">
+                                        <i class="fas fa-times-circle"></i> Request Declined
+                                    </div>
+                                {% elif mentor.status == 'TERMINATED' %}
+                                    <div class="mentor-status terminated">
+                                        <i class="fas fa-ban"></i> Connection Ended
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="mentor-actions">
+                                    {% if mentor.status == 'ACCEPTED' %}
+                                        <button class="secondary-button">
+                                            <!-- <i class="fas fa-envelope"></i> Message -->
+                                        </button>
+                                    {% elif mentor.status == 'REJECTED' or mentor.status == 'TERMINATED' %}
+                                        <button class="secondary-button disabled" disabled>
+                                            <i class="fas fa-user-plus"></i> Request Again
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-mentors-message">
+                    <p>You don't have any mentors yet.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Available Mentors Section -->
+        <div class="available-mentors-section">
+            <h2>Available Mentors</h2>
+            <div class="mentor-search">
+                <input type="text" id="mentorSearch" placeholder="Search mentors by name or department...">
+                <i class="fas fa-search"></i>
+            </div>
+            
+            {% if available_mentors %}
+                <div class="mentors-grid">
+                    {% for mentor in available_mentors %}
+                        <div class="mentor-card available" data-name="{{ mentor.first_name }} {{ mentor.last_name }}" data-dept="{{ mentor.department }}">
+                            <div class="mentor-avatar large">
+                                {{ mentor.first_name[0] }}{{ mentor.last_name[0] }}
+                            </div>
+                            <div class="mentor-info">
+                                <h3>{{ mentor.first_name }} {{ mentor.last_name }}</h3>
+                                <p class="mentor-dept">{{ mentor.department }}</p>
+                                <p class="mentor-bio">{{ mentor.bio or 'Experienced mentor specializing in ' + mentor.department }}</p>
+                                
+                                <div class="mentor-actions">
+                                    <form method="post" action="{{ url_for('request_mentor', mentor_id=mentor.id) }}">
+                                        <button type="submit" class="primary-button">
+                                            <i class="fas fa-user-plus"></i> Request Mentorship
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-mentors-message">
+                    <p>No additional mentors are available at this time.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Mentor search functionality
+    const searchInput = document.getElementById('mentorSearch');
+    const mentorCards = document.querySelectorAll('.mentor-card.available');
+    
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        mentorCards.forEach(card => {
+            const name = card.getAttribute('data-name').toLowerCase();
+            const dept = card.getAttribute('data-dept').toLowerCase();
+            
+            if (name.includes(searchTerm) || dept.includes(searchTerm)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

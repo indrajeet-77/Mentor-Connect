@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentee Sign-In | Mentor Connect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-left">
+            <div class="auth-content">
+                <h1><span class="highlight">Mentee</span> sign-in</h1>
+                
+                <div class="auth-image">
+                    <img src="{{ url_for('static', filename='img/mentee_login.svg') }}" alt="Mentee Login Illustration">
+                </div>
+            </div>
+        </div>
+        
+        <div class="auth-right">
+            <div class="auth-form-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {{ message }}
+                                <span class="close-btn">&times;</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <form method="post" action="{{ url_for('login') }}" class="auth-form">
+                    <input type="hidden" name="role" value="mentee">
+                    
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="form-options">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="showPassword">
+                            <label for="showPassword">Show password</label>
+                        </div>
+                        
+                        <a href="{{ url_for('forgot_password') }}" class="forgot-password">Forgot password?</a>
+                    </div>
+                    
+                    <div class="recaptcha-container">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="notRobot">
+                            <label for="notRobot">I'm not a robot</label>
+                        </div>
+                        <div class="recaptcha-logo">
+                            <img src="{{ url_for('static', filename='img/recaptcha.svg') }}" alt="reCAPTCHA">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="primary-button">Sign in</button>
+                    
+                    <div class="auth-switch">
+                        Don't have an account?
+                        <a href="{{ url_for('signup', role='mentee') }}">Sign up</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('showPassword').addEventListener('change', function() {
+            const passwordField = document.getElementById('password');
+            passwordField.type = this.checked ? 'text' : 'password';
+        });
+        
+        // Handle flash message close buttons
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+    </script>
+</body>
+</html>

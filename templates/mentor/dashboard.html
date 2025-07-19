@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block title %}Mentor Dashboard | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="welcome-header">
+        <h1>Welcome back, {{ session.name }}!</h1>
+    </div>
+    
+    {% if next_meeting_alert %}
+    <div class="alert alert-info" style="margin-bottom: 20px;">
+        <i class="fas fa-bell"></i> {{ next_meeting_alert }}
+    </div>
+    {% endif %}
+    
+    <div class="stats-cards">
+        <div class="stat-card mentee-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-count">{{ mentee_count }}</span>
+                <span class="stat-label">Total Mentees</span>
+            </div>
+        </div>
+        
+        <div class="stat-card posts-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-count">{{ post_count }}</span>
+                <span class="stat-label">Total Posts</span>
+            </div>
+        </div>
+        
+        <div class="stat-card comments-card">
+            <div class="stat-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-count">{{ comment_count }}</span>
+                <span class="stat-label">Total Comments</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-main">
+            <div class="chart-section">
+                <h2>Activity Overview</h2>
+                <div class="chart-container">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="activities-section">
+                <h2>Activities last 7 days</h2>
+                <div class="activities-list">
+                    {% for activity in activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            {% if activity.activity_type == 'LOGIN' %}
+                                <i class="fas fa-sign-in-alt"></i>
+                            {% elif activity.activity_type == 'LOGOUT' %}
+                                <i class="fas fa-sign-out-alt"></i>
+                            {% elif activity.activity_type == 'COMMENT_CREATED' %}
+                                <i class="fas fa-comment"></i>
+                            {% elif activity.activity_type == 'CONNECTION_REQUEST' %}
+                                <i class="fas fa-user-plus"></i>
+                            {% elif activity.activity_type == 'CONNECTION_ACCEPTED' %}
+                                <i class="fas fa-handshake"></i>
+                            {% elif activity.activity_type == 'MEETING_SCHEDULED' %}
+                                <i class="fas fa-calendar-plus"></i>
+                            {% else %}
+                                <i class="fas fa-bell"></i>
+                            {% endif %}
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-header">
+                                <span class="activity-type">{{ activity.activity_type.replace('_', ' ') }}</span>
+                                <span class="activity-time">{{ activity.timestamp }}</span>
+                            </div>
+                            <p class="activity-description">{{ activity.description }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-sidebar">
+            <div class="upcoming-meetings">
+                <h2>Upcoming Meetings</h2>
+                <div class="meetings-list">
+                    {% for meeting in upcoming_meetings %}
+                    <div class="meeting-item">
+                        <div class="meeting-avatar">
+                            {{ meeting.first_name[0] }}{{ meeting.last_name[0] }}
+                        </div>
+                        <div class="meeting-details">
+                            <div class="meeting-name">{{ meeting.first_name }} {{ meeting.last_name }}</div>
+                            <div class="meeting-time">{{ meeting.meeting_time.split(' ')[0] }}, {{ meeting.meeting_time.split(' ')[1] }}</div>
+                        </div>
+                        <div class="meeting-actions">
+                            <a href="{{ url_for('start_meeting', meeting_id=meeting['id']) }}" class="primary-button" target="_blank">
+                                <i class="fas fa-video"></i> Start Meeting
+                            </a>
+                            <!-- <a href="{{ url_for('mentor_meeting_agenda', meeting_id=meeting.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-tasks"></i> Edit Agenda
+                            </a> -->
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="no-meetings">No upcoming meetings scheduled</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="held-meetings">
+                <h2>Held Meetings</h2>
+                <div class="meetings-list">
+                    {% for meeting in past_meetings %}
+                    <div class="meeting-item">
+                        <div class="meeting-avatar">
+                            {{ meeting.first_name[0] }}{{ meeting.last_name[0] }}
+                        </div>
+                        <div class="meeting-details">
+                            <div class="meeting-name">{{ meeting.first_name }} {{ meeting.last_name }}</div>
+                            <div class="meeting-time">{{ meeting.meeting_time.split(' ')[0] }}, {{ meeting.meeting_time.split(' ')[1] }}</div>
+                        </div>
+                        <div class="meeting-actions">
+                            <a href="{{ url_for('mentor_meeting_agenda', meeting_id=meeting.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-tasks"></i> Edit Agenda
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="no-meetings">No past meetings</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="pending-requests">
+                <h2>Pending Mentorship Requests</h2>
+                <div class="requests-list">
+                    {% if pending_requests %}
+                        {% for request in pending_requests %}
+                            <div class="request-item">
+                                <div class="request-avatar">
+                                    {{ request.first_name[0] }}{{ request.last_name[0] }}
+                                </div>
+                                <div class="request-details">
+                                    <div class="request-name">{{ request.first_name }} {{ request.last_name }}</div>
+                                    <div class="request-meta">
+                                        <span>{{ request.department }}</span> | 
+                                        <span>{{ request.semester }} Semester</span> | 
+                                        <span>Roll No: {{ request.roll_no }}</span>
+                                    </div>
+                                </div>
+                                <div class="request-actions">
+                                    <form method="post" action="{{ url_for('accept_mentee', mentee_id=request.id) }}">
+                                        <button type="submit" class="primary-button">
+                                            <i class="fas fa-check"></i> Accept
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('reject_mentee', mentee_id=request.id) }}">
+                                        <button type="submit" class="secondary-button">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-requests">No pending mentorship requests</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Parse the chart data from Flask
+    const chartData = {{ chart_data|safe }};
+    
+    // Create the activity chart
+    const ctx = document.getElementById('activityChart').getContext('2d');
+    const activityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [
+                {
+                    label: 'Meetings',
+                    data: chartData.meetings,
+                    borderColor: '#FF6384',
+                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Posts',
+                    data: chartData.posts,
+                    borderColor: '#36A2EB',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Comments',
+                    data: chartData.comments,
+                    borderColor: '#4BC0C0',
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        boxWidth: 12,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    padding: 10,
+                    cornerRadius: 4,
+                    titleFont: {
+                        size: 14
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            }
+        }
+    });
+</script>
+{% endblock %}

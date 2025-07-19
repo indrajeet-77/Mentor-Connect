@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit User | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="edit-user-page">
+    <div class="page-header">
+        <div class="header-title">
+            <h1>Edit {{ user.role | capitalize }}</h1>
+            <a href="{{ url_for('admin_mentors' if user.role == 'mentor' else 'admin_mentees') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to {{ user.role | capitalize }}s
+            </a>
+        </div>
+    </div>
+    
+    <div class="edit-form-container">
+        <form method="post" action="{{ url_for('admin_edit_user', user_id=user.id) }}" class="edit-form">
+            <div class="form-section">
+                <h2>Basic Information</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user.role == 'mentor' %}
+                <div class="form-section">
+                    <h2>Mentor Details</h2>
+                    
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
+                            <option value="" disabled>Select department</option>
+                            <option value="Computer Science & Engineering" {{ 'selected' if profile.department == 'Computer Science & Engineering' else '' }}>Computer Science & Engineering</option>
+                            <option value="Electrical Engineering" {{ 'selected' if profile.department == 'Electrical Engineering' else '' }}>Electrical Engineering</option>
+                            <option value="Mechanical Engineering" {{ 'selected' if profile.department == 'Mechanical Engineering' else '' }}>Mechanical Engineering</option>
+                            <option value="Civil Engineering" {{ 'selected' if profile.department == 'Civil Engineering' else '' }}>Civil Engineering</option>
+                            <option value="Chemical Engineering" {{ 'selected' if profile.department == 'Chemical Engineering' else '' }}>Chemical Engineering</option>
+                            <option value="Physics" {{ 'selected' if profile.department == 'Physics' else '' }}>Physics</option>
+                            <option value="Mathematics" {{ 'selected' if profile.department == 'Mathematics' else '' }}>Mathematics</option>
+                            <option value="Chemistry" {{ 'selected' if profile.department == 'Chemistry' else '' }}>Chemistry</option>
+                            <option value="Biology" {{ 'selected' if profile.department == 'Biology' else '' }}>Biology</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mobile_no">Mobile Number</label>
+                            <input type="text" id="mobile_no" name="mobile_no" value="{{ profile.mobile_no or '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expertise">Areas of Expertise</label>
+                            <input type="text" id="expertise" name="expertise" value="{{ profile.expertise or '' }}" placeholder="e.g., Machine Learning, Algorithm Design">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" rows="4">{{ profile.bio or '' }}</textarea>
+                    </div>
+                </div>
+            {% elif user.role == 'mentee' %}
+                <div class="form-section">
+                    <h2>Mentee Details</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <select id="department" name="department" required>
+                                <option value="" disabled>Select department</option>
+                                <option value="Computer Science & Engineering" {{ 'selected' if profile.department == 'Computer Science & Engineering' else '' }}>Computer Science & Engineering</option>
+                                <option value="Electrical Engineering" {{ 'selected' if profile.department == 'Electrical Engineering' else '' }}>Electrical Engineering</option>
+                                <option value="Mechanical Engineering" {{ 'selected' if profile.department == 'Mechanical Engineering' else '' }}>Mechanical Engineering</option>
+                                <option value="Civil Engineering" {{ 'selected' if profile.department == 'Civil Engineering' else '' }}>Civil Engineering</option>
+                                <option value="Chemical Engineering" {{ 'selected' if profile.department == 'Chemical Engineering' else '' }}>Chemical Engineering</option>
+                                <option value="Physics" {{ 'selected' if profile.department == 'Physics' else '' }}>Physics</option>
+                                <option value="Mathematics" {{ 'selected' if profile.department == 'Mathematics' else '' }}>Mathematics</option>
+                                <option value="Chemistry" {{ 'selected' if profile.department == 'Chemistry' else '' }}>Chemistry</option>
+                                <option value="Biology" {{ 'selected' if profile.department == 'Biology' else '' }}>Biology</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="semester">Semester</label>
+                            <select id="semester" name="semester" required>
+                                <option value="" disabled>Select semester</option>
+                                <option value="1" {{ 'selected' if profile.semester == '1' else '' }}>1st semester</option>
+                                <option value="2" {{ 'selected' if profile.semester == '2' else '' }}>2nd semester</option>
+                                <option value="3" {{ 'selected' if profile.semester == '3' else '' }}>3rd semester</option>
+                                <option value="4" {{ 'selected' if profile.semester == '4' else '' }}>4th semester</option>
+                                <option value="5" {{ 'selected' if profile.semester == '5' else '' }}>5th semester</option>
+                                <option value="6" {{ 'selected' if profile.semester == '6' else '' }}>6th semester</option>
+                                <option value="7" {{ 'selected' if profile.semester == '7' else '' }}>7th semester</option>
+                                <option value="8" {{ 'selected' if profile.semester == '8' else '' }}>8th semester</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="roll_no">Roll No.</label>
+                            <input type="text" id="roll_no" name="roll_no" value="{{ profile.roll_no or '' }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mobile_no">Mobile Number</label>
+                            <input type="text" id="mobile_no" name="mobile_no" value="{{ profile.mobile_no or '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" id="address" name="address" value="{{ profile.address or '' }}">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="form-actions">
+                <a href="{{ url_for('admin_mentors' if user.role == 'mentor' else 'admin_mentees') }}" class="secondary-button">Cancel</a>
+                <button type="submit" class="primary-button">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

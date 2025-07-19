@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="welcome-header">
+        <h1>System Overview</h1>
+    </div>
+    
+    <div class="stats-cards">
+        <div class="stat-card mentor-card">
+            <div class="stat-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-count">{{ mentor_count }}</span>
+                <span class="stat-label">Total Mentors</span>
+            </div>
+        </div>
+        
+        <div class="stat-card mentee-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-count">{{ mentee_count }}</span>
+                <span class="stat-label">Total Mentees</span>
+            </div>
+        </div>
+        
+        <div class="stat-card connection-card">
+            <div class="stat-icon">
+                <i class="fas fa-link"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-count">{{ connection_count }}</span>
+                <span class="stat-label">Active Connections</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="activities-section admin-activities">
+            <div class="section-header">
+                <h2>Recent System Activities</h2>
+                <a href="#" class="view-all-link">View All</a>
+            </div>
+            
+            <div class="activities-list">
+                {% for activity in activities %}
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        {% if activity.activity_type == 'LOGIN' %}
+                            <i class="fas fa-sign-in-alt"></i>
+                        {% elif activity.activity_type == 'LOGOUT' %}
+                            <i class="fas fa-sign-out-alt"></i>
+                        {% elif activity.activity_type == 'COMMENT_CREATED' %}
+                            <i class="fas fa-comment"></i>
+                        {% elif activity.activity_type == 'CONNECTION_REQUEST' %}
+                            <i class="fas fa-user-plus"></i>
+                        {% elif activity.activity_type == 'CONNECTION_ACCEPTED' %}
+                            <i class="fas fa-handshake"></i>
+                        {% elif activity.activity_type == 'MEETING_SCHEDULED' %}
+                            <i class="fas fa-calendar-plus"></i>
+                        {% else %}
+                            <i class="fas fa-bell"></i>
+                        {% endif %}
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-header">
+                            <span class="activity-type">{{ activity.activity_type.replace('_', ' ') }}</span>
+                            <span class="activity-time">{{ activity.timestamp }}</span>
+                        </div>
+                        <div class="activity-user">
+                            <span class="user-role {{ activity.role }}">{{ activity.role }}</span>
+                            <span class="user-name">{{ activity.first_name }} {{ activity.last_name }}</span>
+                        </div>
+                        <p class="activity-description">{{ activity.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('admin_mentors') }}" class="action-button">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Manage Mentors</span>
+                </a>
+                
+                <a href="{{ url_for('admin_mentees') }}" class="action-button">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Manage Mentees</span>
+                </a>
+                
+                <a href="#" class="action-button">
+                    <i class="fas fa-cog"></i>
+                    <span>System Settings</span>
+                </a>
+                
+                <a href="#" class="action-button">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

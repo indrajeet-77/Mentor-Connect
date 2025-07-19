@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Past Mentees | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="mentees-page">
+    <div class="page-header">
+        <h1>Past Mentees</h1>
+    </div>
+    <div class="mentees-stats">
+        <p><span class="mentee-count">{{ mentees|length }}</span> past mentees found</p>
+    </div>
+    <div class="mentees-table-container">
+        <table class="mentees-table">
+            <thead>
+                <tr>
+                    <th>Sl No.</th>
+                    <th>Name</th>
+                    <th>Roll No.</th>
+                    <th>Address</th>
+                    <th>Department</th>
+                    <th>Semester</th>
+                    <th>Mobile No.</th>
+                    <th>Removed At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if mentees %}
+                    {% for mentee in mentees %}
+                    <tr class="mentee-row">
+                        <td>{{ loop.index }}</td>
+                        <td>{{ mentee.first_name }} {{ mentee.last_name }}</td>
+                        <td>{{ mentee.roll_no }}</td>
+                        <td>{{ mentee.address or 'N/A' }}</td>
+                        <td>{{ mentee.department }}</td>
+                        <td>{{ mentee.semester }} semester</td>
+                        <td>{{ mentee.mobile_no or 'N/A' }}</td>
+                        <td>{{ mentee.updated_at or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align: center;">No past mentees found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

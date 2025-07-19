@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Connect - Welcome</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-left">
+            <div class="welcome-content">
+                <h1><span class="welcome-text">Welcome</span>, to</h1>
+                <h2>Student Mentoring System</h2>
+                
+                <div class="welcome-image">
+                    <img src="{{ url_for('static', filename='img/mentoring.svg') }}" alt="Mentoring Illustration">
+                </div>
+            </div>
+        </div>
+        
+        <div class="welcome-right">
+            <div class="role-selection">
+                <h3>Select your role</h3>
+                
+                <div class="role-options">
+                    <label class="role-option">
+                        <input type="radio" name="role" value="admin" class="role-radio">
+                        <span class="role-checkmark"></span>
+                        Admin
+                    </label>
+                    
+                    <label class="role-option">
+                        <input type="radio" name="role" value="mentor" class="role-radio">
+                        <span class="role-checkmark"></span>
+                        Mentor
+                    </label>
+                    
+                    <label class="role-option">
+                        <input type="radio" name="role" value="mentee" class="role-radio" checked>
+                        <span class="role-checkmark"></span>
+                        Mentee
+                    </label>
+                </div>
+                
+                <button id="next-btn" class="primary-button">Next</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('next-btn').addEventListener('click', function() {
+            const selectedRole = document.querySelector('input[name="role"]:checked').value;
+            window.location.href = `/login?role=${selectedRole}`;
+        });
+    </script>
+</body>
+</html>

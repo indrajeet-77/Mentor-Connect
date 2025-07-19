@@ -1,0 +1,63 @@
+<header class="top-header">
+    <div class="notification-area">
+        <div class="notification-icon" style="position: relative;">
+            <i class="fas fa-bell"></i>
+            {% if session.role == 'mentor' and mentor_notifications|length > 0 %}
+                <span class="badge">{{ mentor_notifications|length }}</span>
+                <div class="notification-dropdown">
+                    <ul>
+                        {% for note in mentor_notifications %}
+                            <li>
+                                {{ note.description }}<br>
+                                <small>{{ note.timestamp }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% elif session.role == 'mentee' and mentee_notifications|length > 0 %}
+                <span class="badge">{{ mentee_notifications|length }}</span>
+                <div class="notification-dropdown">
+                    <ul>
+                        {% for note in mentee_notifications %}
+                            <li>
+                                {{ note.description }}<br>
+                                <small>{{ note.timestamp }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="user-area">
+        <div class="user-initial">
+            {{ session.name[0] | upper }}
+        </div>
+        <div class="user-info">
+            <div class="user-name">{{ session.name }}</div>
+            <div class="user-email">{{ session.email }}</div>
+        </div>
+    </div>
+</header>
+<style>
+.notification-icon { cursor: pointer; }
+.badge {
+    position: absolute; top: -8px; right: -8px;
+    background: #ff3b3b; color: #fff; border-radius: 50%;
+    padding: 2px 6px; font-size: 12px;
+}
+.notification-dropdown {
+    display: none;
+    position: absolute; right: 0; top: 30px;
+    background: #fff; border: 1px solid #ddd; border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 250px; z-index: 100;
+}
+.notification-icon:hover .notification-dropdown {
+    display: block;
+}
+.notification-dropdown ul { list-style: none; margin: 0; padding: 10px; }
+.notification-dropdown li { padding: 8px 0; border-bottom: 1px solid #eee; }
+.notification-dropdown li:last-child { border-bottom: none; }
+</style>

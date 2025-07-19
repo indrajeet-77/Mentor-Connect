@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts | Mentor Connect{% endblock %}
+
+{% block content %}
+<style>
+  .posts-page {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .posts-page h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+  }
+
+  .post-item {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: #666;
+  }
+
+  .post-content p {
+    font-size: 1.1rem;
+    color: #222;
+    margin-bottom: 1rem;
+  }
+
+  .post-meta {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 1rem;
+  }
+
+  .comments-section {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+  }
+
+  .comments-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #444;
+  }
+
+  .comments-section ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+
+  .comments-section li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+  }
+
+  .comment-date {
+    font-size: 0.8rem;
+    color: #999;
+    margin-left: 5px;
+  }
+
+  .add-comment-form textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .primary-button {
+    padding: 0.5rem 1.2rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-button:hover {
+    background-color: #0056b3;
+  }
+</style>
+
+<div class="posts-page">
+  <h1>Posts</h1>
+
+  <div class="posts-list">
+    {% for post in posts %}
+    <div class="post-item">
+      <div class="post-header">
+        <span class="post-author">{{ post.first_name }} {{ post.last_name }}</span>
+        <span class="post-date">{{ post.created_at }}</span>
+      </div>
+
+      <div class="post-content">
+        <p>{{ post.content }}</p>
+      </div>
+
+      <div class="post-meta">
+        <span>{{ post.comment_count }} Comment{{ post.comment_count != 1 and 's' or '' }}</span>
+      </div>
+
+      <div class="comments-section">
+        <h3>Comments</h3>
+        <ul>
+          {% for comment in comments if comment.post_id == post.id %}
+          <li>
+            <strong>{{ comment.first_name }} {{ comment.last_name }}</strong>:
+            {{ comment.content }}
+            <span class="comment-date">{{ comment.created_at }}</span>
+          </li>
+          {% endfor %}
+          {% if not comments | selectattr('post_id', 'equalto', post.id) | list %}
+          <li><em>No comments yet.</em></li>
+          {% endif %}
+        </ul>
+
+        <form method="POST" class="add-comment-form">
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <textarea name="comment" rows="2" placeholder="Write a comment..." required></textarea>
+          <button type="submit" class="primary-button">Comment</button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <p>No posts available.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .meeting-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .meeting-card .card-header {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 1rem 1.5rem;
+  }
+
+  .list-group-item {
+    border: none;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    margin-bottom: 1rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .list-group-item:hover {
+    background-color: #e9ecef;
+    transform: scale(1.01);
+  }
+
+  .join-btn {
+    background-color: #28a745;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+  }
+
+  .join-btn:hover {
+    background-color: #218838;
+  }
+
+  .agenda {
+    font-style: italic;
+    color: #495057;
+  }
+
+  .section-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #343a40;
+  }
+
+  .meeting-info small {
+    color: #6c757d;
+  }
+</style>
+
+<div class="container mt-5">
+  <h2 class="mb-4 section-title text-center">My Meetings</h2>
+
+  <!-- Upcoming Meetings -->
+  <div class="card meeting-card">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Upcoming Meetings</h4>
+    </div>
+    <div class="card-body">
+      {% if upcoming_meetings %}
+        <div class="list-group">
+          {% for meeting in upcoming_meetings %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">{{ meeting.title }}</h5>
+                <small>Scheduled: {{ meeting.meeting_time|datetimeformat }}</small>
+              </div>
+              <p class="mb-1 meeting-info">
+                With Mentor: {{ meeting.mentor_first_name }} {{ meeting.mentor_last_name }}
+              </p>
+              <small class="d-block mb-2">Duration: {{ meeting.duration }} minutes</small>
+              <a href="{{ meeting.agenda }}" target="_blank" class="join-btn">Join Meeting</a>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info">No upcoming meetings scheduled.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Past Meetings -->
+  <div class="card meeting-card">
+    <div class="card-header bg-secondary text-white">
+      <h4 class="mb-0">Past Meetings</h4>
+    </div>
+    <div class="card-body">
+      {% if past_meetings %}
+        <div class="list-group">
+          {% for meeting in past_meetings %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">{{ meeting.title }}</h5>
+                <small>Held on: {{ meeting.meeting_time|datetimeformat }}</small>
+              </div>
+              <p class="mb-1 meeting-info">
+                With Mentor: {{ meeting.mentor_first_name }} {{ meeting.mentor_last_name }}
+              </p>
+              <small class="d-block mb-2">Duration: {{ meeting.duration }} minutes</small>
+              <p class="agenda">Agenda: {{ meeting.agenda }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info">No past meetings found.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

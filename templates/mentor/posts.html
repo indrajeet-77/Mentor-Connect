@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Mentor Posts | Mentor Connect{% endblock %}
+
+{% block content %}
+<style>
+  .posts-page {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .posts-page h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+  }
+
+  .create-post-form {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+
+  .create-post-form textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .primary-button {
+    padding: 0.5rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-button:hover {
+    background-color: #0056b3;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .post-item {
+    background-color: #f9f9f9;
+    padding: 1.25rem;
+    border-radius: 10px;
+    border: 1px solid #e3e3e3;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
+  }
+
+  .post-content p {
+    font-size: 1.1rem;
+    color: #222;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-meta {
+    font-size: 0.9rem;
+    color: #777;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .comments-section {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e3e3e3;
+  }
+
+  .comments-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+    color: #333;
+  }
+
+  .comments-section ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .comments-section li {
+    background-color: #fff;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .comment-date {
+    font-size: 0.8rem;
+    color: #999;
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 600px) {
+    .post-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<div class="posts-page">
+  <h1>Your Posts</h1>
+
+  <form method="POST" class="create-post-form">
+    <textarea name="content" rows="4" placeholder="Write something..." required></textarea>
+    <button type="submit" class="primary-button">Post</button>
+  </form>
+
+  <div class="posts-list">
+    {% for post in posts %}
+    <div class="post-item">
+      <div class="post-content">
+        <p>{{ post.content }}</p>
+      </div>
+      <div class="post-meta">
+        <span>Posted on {{ post.created_at }}</span>
+        <span>{{ post.comment_count }} Comment{{ post.comment_count != 1 and 's' or '' }}</span>
+      </div>
+      <div class="comments-section">
+        <h3>Comments</h3>
+        <ul>
+          {% for comment in comments if comment.post_id == post.id %}
+          <li>
+            <strong>{{ comment.first_name }} {{ comment.last_name }}</strong>:
+            {{ comment.content }}
+            <span class="comment-date">{{ comment.created_at }}</span>
+          </li>
+          {% endfor %}
+          {% if not comments | selectattr('post_id', 'equalto', post.id) | list %}
+          <li><em>No comments yet.</em></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    {% else %}
+    <p>No posts yet. Start by creating one!</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+

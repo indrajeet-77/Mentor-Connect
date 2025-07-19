@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <div class="welcome-header">
+        <h1>Edit Your Profile, {{ session.name }}!</h1>
+    </div>
+    <div class="profile-section">
+        <h2>Edit Personal Information</h2>
+        <form method="POST" class="profile-details">
+            <label>First Name:</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" required>
+            <label>Last Name:</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" required>
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ user.email }}" required>
+            <label>Department:</label>
+            <input type="text" name="department" value="{{ profile.department if profile else '' }}">
+            <label>Semester:</label>
+            <input type="text" name="semester" value="{{ profile.semester if profile else '' }}">
+            <label>Roll No:</label>
+            <input type="text" name="roll_no" value="{{ profile.roll_no if profile else '' }}">
+            <label>Mobile Number:</label>
+            <input type="text" name="mobile_no" value="{{ profile.mobile_no if profile and profile.mobile_no else '' }}">
+            <label>Address:</label>
+            <input type="text" name="address" value="{{ profile.address if profile and profile.address else '' }}">
+            <button type="submit" class="btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

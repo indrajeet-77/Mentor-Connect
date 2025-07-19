@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Mentee Details | Mentor Connect{% endblock %}
+
+{% block content %}
+<div class="mentee-details-page">
+    <div class="page-header">
+        <div class="header-title">
+            <h1>Mentee Details</h1>
+            <a href="{{ url_for('mentor_mentees') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Mentees
+            </a>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('schedule_meeting', mentee_id=mentee.user_id) }}" class="primary-button">
+                <i class="fas fa-calendar-plus"></i> Schedule Meeting
+            </a>
+        </div>
+    </div>
+
+    <div class="mentee-profile-container">
+        <div class="mentee-profile-header">
+            <div class="mentee-avatar large">
+                {{ mentee.first_name[0] }}{{ mentee.last_name[0] }}
+            </div>
+            <div class="mentee-profile-info">
+                <h2>{{ mentee.first_name }} {{ mentee.last_name }}</h2>
+                <div class="mentee-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-id-card"></i> {{ mentee.roll_no }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-university"></i> {{ mentee.department }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-graduation-cap"></i> Semester {{ mentee.semester }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mentee-details-tabs">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="personal">Personal Details</button>
+                <!-- <button class="tab-btn" data-tab="academic">Academic Records</button> -->
+                <button class="tab-btn" data-tab="meetings">Meetings</button>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="personal-tab">
+                    <div class="detail-section">
+                        <h3>CONTACT INFORMATION</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value">{{ mentee.email }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Mobile</div>
+                                <div class="detail-value">{{ mentee.mobile_no }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Address</div>
+                                <div class="detail-value">{{ mentee.address }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>ACADEMIC INFORMATION</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <div class="detail-label">Department</div>
+                                <div class="detail-value">{{ mentee.department }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Roll No.</div>
+                                <div class="detail-value">{{ mentee.roll_no }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Semester</div>
+                                <div class="detail-value">{{ mentee.semester }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="academic-tab">
+                    {% if academic_records %}
+                    {% for semester in academic_records|sort(attribute='semester') %}
+                    <div class="semester-section">
+                        <h3>Semester {{ semester.semester }}</h3>
+                        <table class="academic-table">
+                            <thead>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Course Title</th>
+                                    <th>Credits</th>
+                                    <th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ semester.course_code }}</td>
+                                    <td>{{ semester.course_title }}</td>
+                                    <td>{{ semester.credits }}</td>
+                                    <td>{{ semester.grade }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="no-records">
+                        <p>No academic records found</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="tab-pane" id="meetings-tab">
+                    <div class="meetings-container">
+                        <div class="meeting-section">
+                            <h3>Upcoming Meetings</h3>
+                            <div class="meetings-list">
+                                {% if meetings %}
+                                {% for meeting in meetings %}
+                                {% if meeting.meeting_time > now %}
+                                <div class="meeting-card">
+                                    <div class="meeting-header">
+                                        <div class="meeting-date">
+                                            {{ meeting.meeting_time.strftime('%d') }}
+                                            <span class="month">{{ meeting.meeting_time.strftime('%b') }}</span>
+                                        </div>
+                                        <div class="meeting-time">
+                                            <i class="fas fa-clock"></i>
+                                            {{ meeting.meeting_time.strftime('%H:%M') }}
+                                            <span class="duration">({{ meeting.duration }} mins)</span>
+                                        </div>
+                                    </div>
+                                    <div class="meeting-body">
+                                        <h4>{{ meeting.title }}</h4>
+                                        <p>{{ meeting.agenda or 'No agenda specified' }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                <p class="no-meetings">No upcoming meetings scheduled</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="meeting-section">
+                            <h3>Past Meetings</h3>
+                            <div class="meetings-list">
+                                {% if meetings %}
+                                {% for meeting in meetings %}
+                                {% if meeting.meeting_time <= now %} <div class="meeting-card past">
+                                    <div class="meeting-header">
+                                        <div class="meeting-date">
+                                            {{ meeting.meeting_time.strftime('%d') }}
+                                            <span class="month">{{ meeting.meeting_time.strftime('%b') }}</span>
+                                        </div>
+                                        <div class="meeting-time">
+                                            <i class="fas fa-clock"></i>
+                                            {{ meeting.meeting_time.strftime('%H:%M') }}
+                                            <span class="duration">({{ meeting.duration }} mins)</span>
+                                        </div>
+                                    </div>
+                                    <div class="meeting-body">
+                                        <h4>{{ meeting.title }}</h4>
+                                        <p>{{ meeting.agenda or 'No agenda specified' }}</p>
+                                    </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% else %}
+                            <p class="no-meetings">No past meetings found</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+
+            // Remove active class from all buttons and panes
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding pane
+            button.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        });
+    });
+</script>
+{% endblock %}
