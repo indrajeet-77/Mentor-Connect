@@ -350,7 +350,7 @@ def ensure_created_at_column():
 
 
 # Call this function at the beginning of your route
-ensure_created_at_column()
+
 
 
 @app.route("/mentor/dashboard")
