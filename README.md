@@ -48,11 +48,21 @@ pip install -r requirements.txt
 python app.py
 ```
 ---
-🙋‍♂️ Author
+## 🙋‍♂️ Author
 Made with 💙 by Indrajeet Pimpalgaonkar
 
 ---
-📸 Screenshots 
-![Dashboard](static/img/dashboard.png)
+## 📸 UI Preview
+
+### 👨‍💼 Admin Dashboard
+![Admin Dashboard](static/img/admin%20dashboard.png)
+
+
+### 👨‍🎓 Mentee View
+![Mentee](static/img/Mentee.png)
+
+### 📊 Mentor Dashboard
+![Mentor Dashboard](static/img/Mentor%20dashboard.png)
+
 
 
