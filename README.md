@@ -57,8 +57,6 @@ Made with 💙 by Indrajeet Pimpalgaonkar
 ### 👨‍💼 Admin Dashboard
 ![Admin Dashboard](static/img/admin%20dashboard.png)
 
-### 🔒 Admin Login
-![Admin Login](static/img/admin_login.svg)
 
 ### 👨‍🎓 Mentee View
 ![Mentee](static/img/Mentee.png)
@@ -66,13 +64,5 @@ Made with 💙 by Indrajeet Pimpalgaonkar
 ### 📊 Mentor Dashboard
 ![Mentor Dashboard](static/img/Mentor%20Dashboard%20for%20mentees.png)
 
-### 🧑‍🏫 Mentor Login
-![Mentor Login](static/img/mentor_login.svg)
-
-### 👥 Mentoring Overview
-![Mentoring](static/img/mentoring.svg)
-
-### 🔐 reCAPTCHA
-![reCAPTCHA](static/img/recaptcha.svg)
 
 
