@@ -36,27 +36,23 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-
 def init_db():
-    with app.app_context():
-        db = get_db()
-        with app.open_resource("schema.sql", mode="r") as f:
-            db.cursor().executescript(f.read())
-        db.commit()
+
 
 
 # Create database if it doesn't exist
 def create_database():
     if not os.path.exists(app.config["DATABASE"]):
-        init_db()
+        from create_tables import create_tables
+        create_tables()  # Use Python logic to create tables
         print("Database created successfully!")
 
-        # Add admin user
+        # Add admin user if not exists
         conn = get_db()
         cursor = conn.cursor()
         admin_password = generate_password_hash("admin123")
         cursor.execute(
-            "INSERT INTO users (email, password, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)",
+            "INSERT OR IGNORE INTO users (email, password, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)",
             (
                 "admin@mentorconnect.com",
                 admin_password,
@@ -332,25 +328,8 @@ def admin_dashboard():
 
 # new
 def ensure_created_at_column():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    # Check if the 'created_at' column exists
-    cursor.execute("PRAGMA table_info(posts);")
-    columns = cursor.fetchall()
-
-    # If 'created_at' doesn't exist, add it
-    if not any(column["name"] == "created_at" for column in columns):
-        cursor.execute(
-            """
-            ALTER TABLE posts ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-        """
-        )
-        conn.commit()
-
-
-# Call this function at the beginning of your route
-
+    # ...existing code...
+    pass
 
 
 @app.route("/mentor/dashboard")
